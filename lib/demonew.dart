@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:image/image.dart' as img;
+
 class ImagePage extends StatefulWidget {
   @override
   _ImagePageState createState() => _ImagePageState();
@@ -32,8 +34,7 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Future<void> _screenshot() async {
-    print(_screen.currentContext.findRenderObject());
-    RenderRepaintBoundary boundary = _screen.currentContext.findRenderObject();
+     RenderRepaintBoundary boundary = _screen.currentContext.findRenderObject();
 
     double pixelRatio = _screenSize.height / _screenSize.width;
     ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
@@ -108,7 +109,6 @@ class _ImagePageState extends State<ImagePage> {
                 child: Image.asset(
                   'assets/images/sel.png',
                   fit: BoxFit.cover,
-
                 ),
               ),
             ),
