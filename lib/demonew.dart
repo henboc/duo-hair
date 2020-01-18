@@ -1,11 +1,9 @@
-import 'dart:io'; 
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show Image, ImageByteFormat;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart'; 
+import 'package:flutter/rendering.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-
 
 class ImagePage extends StatefulWidget {
   @override
@@ -55,29 +53,27 @@ class _ImagePageState extends State<ImagePage> {
     }
   }
 
-  double _scale = 1; 
-  double _last = 1; 
-  Offset _translate = Offset(0, 0); 
+  double _scale = 1;
+  double _lastScale = 1;
+  Offset _translate = Offset(0, 0);
   double _angle = 0;
-
- 
-  void _scaleEnd(ScaleEndDetails d) {
+   void _scaleEnd(ScaleEndDetails d) {
     // lets remember the last scale and calculate new scale with it
-    _last = _scale;
-     _angle = _angle;
-  }
+    _lastScale = _scale;
+    _angle = _angle;
+   }
 
-  void _handleScale(ScaleUpdateDetails d) { 
+  void _handleScale(ScaleUpdateDetails d) {
     setState(() {
       // you can control max and min scale here
-      if (_last * d.scale < 0.03 || _last * d.scale > 2) return;
-      _scale = _last * d.scale;
+      if (_lastScale * d.scale < 0.2 || _lastScale * d.scale > 3) return;
+      _scale = _lastScale * d.scale;
       _translate = d.focalPoint;
+
+      //TODO fix: this sets to zero when user touched with one finger
       _angle = d.rotation;
     });
   }
-
-  
 
   @override
   void initState() {
@@ -87,9 +83,9 @@ class _ImagePageState extends State<ImagePage> {
 
   void _postCallback(duration) {
     RenderBox renderBox = _screen.currentContext.findRenderObject();
-    _screenSize = renderBox.size; 
+    _screenSize = renderBox.size;
     setState(() {
-       _translate = Offset(MediaQuery.of(context).size.width / 6,
+      _translate = Offset(MediaQuery.of(context).size.width / 6,
           MediaQuery.of(context).size.height / 6);
     });
   }
@@ -108,36 +104,37 @@ class _ImagePageState extends State<ImagePage> {
             child: Center(
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-                              child: Image.asset(
-                    'assets/images/sel.png',fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  'assets/images/sel.png',
+                  fit: BoxFit.cover,
+
                 ),
               ),
             ),
           ),
-          
-          
           SizedBox(
-            height: MediaQuery.of(context).size.height/3,
-            width: MediaQuery.of(context).size.width/3,
+            height: MediaQuery.of(context).size.height / 3,
+            width: MediaQuery.of(context).size.width / 3,
             child: Transform.rotate(
               angle: _angle,
               child: Transform.translate(
-                 offset: _translate.translate(
+                offset: _translate.translate(
                     -MediaQuery.of(context).size.width / 6,
                     -MediaQuery.of(context).size.height / 6),
                 child: Transform.scale(
                   scale: _scale,
                   child: Image.asset(
-                  'assets/images/red_hair.png',fit: BoxFit.contain,
-              ),
+                    'assets/images/red_hair.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
           ),
           GestureDetector(
             onScaleEnd: _scaleEnd,
-            onScaleUpdate: _handleScale, 
+            onScaleUpdate: _handleScale,
           ),
         ],
       ),
@@ -148,4 +145,3 @@ class _ImagePageState extends State<ImagePage> {
     );
   }
 }
-
